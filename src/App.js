@@ -3,6 +3,8 @@ import { BrowserRouter, Link } from 'react-router-dom'
 import { Label, input, Classes} from "@blueprintjs/core";
 import { FormErrors } from './components/FormErrors';
 import LogIn from './components/LogIn';
+import Success_login from './components/Success_login';
+import {browserHistory} from "react-router";
 import "normalize.css/normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
@@ -16,7 +18,8 @@ class App extends Component {
       	emailValid: false,
       	passwordValid: false,
       	formValid: false,
-      	response:""
+      	response:"",
+      	statuscode:""
     }
     this.handleSubmit = this.handleSubmit.bind(this);
    /* this.changeHandler = this.changeHandler.bind(this)*/
@@ -74,8 +77,10 @@ handleUserInput = (e) => {
     fetch('http://localhost:3002/authenticate', {
       method: 'POST',
       body: formData,
-    }).then(response => response.json())
-	.then(response => console.log('Success:', JSON.stringify(response)))
+    }).then(response => this.setState({statuscode: response.status}))
+	.then(response => console.log(this.state.statuscode))
+
+
 	/*.then(if(!response.hasOwnProperty('error')
 			console.log('Failure')
 		)
@@ -88,14 +93,16 @@ handleUserInput = (e) => {
   }
   render() {
     return (
-      <LogIn 
+      (this.state.statuscode === 401 || this.state.statuscode=== '') ? <LogIn 
         email = {this.state.email} 
         password = {this.state.password}
         handleSubmit = {this.handleSubmit} 
         formErrors = {this.state.formErrors}
         formValid = {this.state.formValid}
         handleUserInput = {this.handleUserInput}
-      />
+      /> : (null)
+
+      
     );
   }
 }
