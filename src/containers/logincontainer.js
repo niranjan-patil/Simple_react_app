@@ -75,17 +75,6 @@ handleUserInput = (e) => {
       body: formData,
     }).then(response => this.setState({statuscode: response.status}))
 	.then(response => console.log(this.state.statuscode))
-
-
-	/*.then(if(!response.hasOwnProperty('error')
-			console.log('Failure')
-		)
-		)
-	//this.setState({response: })
-
-	/*if(!response..hasOwnProperty('error')) {
-
-	}*/
   }
   render() {
     return (
