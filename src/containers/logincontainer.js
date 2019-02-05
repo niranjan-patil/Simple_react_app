@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import LogIn from '/home/niranjan/Documents/example2-app/src/components/LogIn';
+import AuthService from '/home/niranjan/Documents/example2-app/src/components/AuthService';
 import {Redirect} from 'react-router-dom';
 import "normalize.css/normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -11,12 +12,13 @@ class LoginContainer extends Component {
     	email:"",
     	password:"",
     	formErrors: {email: '', password: ''},
-      	emailValid: false,
-      	passwordValid: false,
-      	formValid: false,
-      	response:"",
-      	statuscode:""
+      emailValid: false,
+      passwordValid: false,
+      formValid: false,
+      response:"",
+      statuscode:""
     }
+    this.Auth = new AuthService();
     this.handleSubmit = this.handleSubmit.bind(this);
    /* this.changeHandler = this.changeHandler.bind(this)*/
   }
@@ -66,26 +68,38 @@ handleUserInput = (e) => {
 }*/
   handleSubmit(event) {
   	
-         
-    var formData = new FormData();
+    event.preventDefault();
+      
+    this.Auth.login(this.state.email,this.state.password)
+      .then(res =>{
+          this.props.history.replace('/');
+      })
+      .catch(err =>{
+          alert(err);
+      })     
+   /* var formData = new FormData();
     formData.append('email', this.state.email);
     formData.append('password', this.state.password)
     fetch('http://localhost:3002/authenticate', {
       method: 'POST',
       body: formData,
     }).then(response => this.setState({statuscode: response.status}))
-	.then(response => console.log(this.state.statuscode))
+	.then(response => console.log(this.state.statuscode))*/
+  }
+  componentWillMount(){
+    if(this.Auth.loggedIn())
+        this.props.history.replace('/');
   }
   render() {
     return (
-      (this.state.statuscode === 401 || this.state.statuscode=== '') ? <LogIn 
+      <LogIn 
         email = {this.state.email} 
         password = {this.state.password}
         handleSubmit = {this.handleSubmit} 
         formErrors = {this.state.formErrors}
         formValid = {this.state.formValid}
         handleUserInput = {this.handleUserInput}
-      /> : <Redirect to="/Welcome"/>
+      />
 
       
     );
